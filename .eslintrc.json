@@ -1,7 +1,17 @@
 {
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
   "extends": [
-    // "sznm/react",
-    // "plugin:react/jsx-runtime"
-    // "plugin:@next/next/recommended"
+    "sznm/react",
+    "plugin:react/jsx-runtime",
+    "plugin:@next/next/recommended"
+
+    // "eslint:recommended",
+    // "eslint-config-prettier"
   ]
 }
