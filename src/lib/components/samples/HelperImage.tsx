@@ -17,7 +17,7 @@ const HelperImage = ({ label, src }: HelperImageProps) => {
 };
 
 HelperImage.defaultProps = {
-  label: "",
+  label: ""
 };
 
 export default HelperImage;

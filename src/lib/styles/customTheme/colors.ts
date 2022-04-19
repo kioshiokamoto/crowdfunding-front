@@ -13,8 +13,8 @@ const extendedColors: DeepPartial<
     600: "",
     700: "",
     800: "",
-    900: "",
-  },
+    900: ""
+  }
 };
 
 /** override chakra colors here */
@@ -22,7 +22,7 @@ const overridenChakraColors: DeepPartial<Theme["colors"]> = {};
 
 const colors = {
   ...overridenChakraColors,
-  ...extendedColors,
+  ...extendedColors
 };
 
 export default colors;

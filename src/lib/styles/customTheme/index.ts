@@ -8,8 +8,8 @@ const customTheme = extendTheme({
   fonts,
   colors,
   components: {
-    Button,
-  },
+    Button
+  }
 });
 
 export default customTheme;

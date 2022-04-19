@@ -3,14 +3,14 @@ import {
   Grid,
   Heading,
   useBreakpointValue,
-  useColorMode,
+  useColorMode
 } from "@chakra-ui/react";
 
 const SomeText = () => {
   const { colorMode } = useColorMode();
   const textSize = useBreakpointValue({
     base: "xs",
-    sm: "sm",
+    sm: "sm"
   });
 
   return (
