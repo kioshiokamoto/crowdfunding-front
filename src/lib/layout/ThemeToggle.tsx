@@ -9,6 +9,7 @@ const ThemeToggle = () => {
       aria-label="theme toggle"
       icon={colorMode === "light" ? <RiMoonFill /> : <RiSunLine />}
       onClick={toggleColorMode}
+      display={{ base: "none", md: "inline-flex" }}
     />
   );
 };

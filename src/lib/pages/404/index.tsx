@@ -1,59 +1,32 @@
-import {
-  Box,
-  Button,
-  Heading,
-  Image,
-  Text,
-  Link as ChakraLink,
-  useColorMode,
-  Flex,
-} from "@chakra-ui/react";
-import Link from "next/link";
+import { Box, Heading, Text, Button } from "@chakra-ui/react";
 
-import MotionBox from "lib/components/motion/Box";
-
-const Page404 = () => {
-  const { colorMode } = useColorMode();
-
+export default function NotFound() {
   return (
-    <Flex minHeight="70vh" direction="column" justifyContent="center">
-      <MotionBox
-        animate={{ y: 20 }}
-        transition={{ repeat: Infinity, duration: 2, repeatType: "reverse" }}
-        width={["100%", "70%", "60%", "60%"]}
-        margin="0 auto"
+    <Box textAlign="center" py={10} px={6}>
+      <Heading
+        display="inline-block"
+        as="h2"
+        size="2xl"
+        bgGradient="linear(to-r, teal.400, teal.600)"
+        backgroundClip="text"
       >
-        <Image
-          src="/404 Error-pana.svg"
-          alt="Error 404 not found Illustration"
-        />
-      </MotionBox>
-      <Text textAlign="center" fontSize="xs">
-        <ChakraLink
-          href="https://stories.freepik.com/web"
-          isExternal
-          rel="noopener noreferrer"
-        >
-          Illustration by Freepik Stories
-        </ChakraLink>
+        404
+      </Heading>
+      <Text fontSize="18px" mt={3} mb={2}>
+        Página no encontrada
+      </Text>
+      <Text color={"gray.500"} mb={6}>
+        La página que busca no parece existir
       </Text>
 
-      <Box marginY={4}>
-        <Heading textAlign="center">Page not Found.</Heading>
-
-        <Box textAlign="center" marginTop={4}>
-          <Text>It&apos;s Okay!</Text>
-          <Link href="/" passHref>
-            <Button
-              backgroundColor={colorMode === "light" ? "gray.300" : "teal.500"}
-            >
-              Let&apos;s Head Back
-            </Button>
-          </Link>
-        </Box>
-      </Box>
-    </Flex>
+      <Button
+        colorScheme="teal"
+        bgGradient="linear(to-r, teal.400, teal.500, teal.600)"
+        color="white"
+        variant="solid"
+      >
+        Ir al inicio
+      </Button>
+    </Box>
   );
-};
-
-export default Page404;
+}

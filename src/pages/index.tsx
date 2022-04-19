@@ -1,3 +1,7 @@
-import Home from "lib/pages/home";
+import Home from "lib/pages/home/Home/Home";
 
-export default Home;
+const HomeScreen = () => {
+  return <Home />;
+};
+
+export default HomeScreen;

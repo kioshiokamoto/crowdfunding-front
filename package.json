@@ -19,6 +19,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^1.1.7",
     "@chakra-ui/react": "^1.8.6",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
@@ -33,6 +34,10 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^16.2.1",
+    "@testing-library/react": "^13.1.1",
+    "@testing-library/react-hooks": "^8.0.0",
+    "@testing-library/user-event": "^14.1.1",
+    "@types/jest": "^27.4.1",
     "@types/react": "^17.0.40",
     "commitlint": "^16.2.3",
     "eslint": "^8.11.0",

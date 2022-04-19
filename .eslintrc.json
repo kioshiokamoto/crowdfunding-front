@@ -1,7 +1,7 @@
 {
   "extends": [
-    "sznm/react",
-    "plugin:react/jsx-runtime",
-    "plugin:@next/next/recommended"
+    // "sznm/react",
+    // "plugin:react/jsx-runtime"
+    // "plugin:@next/next/recommended"
   ]
 }
