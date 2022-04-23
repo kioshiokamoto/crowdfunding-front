@@ -5,10 +5,12 @@ import { useColorModeValue, useBreakpointValue } from "@chakra-ui/react";
 import { useDisclosure, Image } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { ChevronDownIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import type { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import Link from "next/link";
 
 import ThemeToggle from "./ThemeToggle";
+import Footer from "./Footer";
+import AuthModal from "lib/components/AuthModal/AuthModal";
 
 type LayoutProps = {
   children: ReactNode;
@@ -16,96 +18,122 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const { isOpen, onToggle } = useDisclosure();
+  const {
+    isOpen: isModalOpen,
+    onOpen: onModalOpen,
+    onClose: onModalClose
+  } = useDisclosure();
+  const [authType, setAuthType] = useState<"LOGIN" | "REGISTER">("LOGIN");
 
   return (
-    <Box>
-      <Flex
-        bg={useColorModeValue("white", "gray.800")}
-        color={useColorModeValue("gray.600", "white")}
-        minH={"60px"}
-        py={{ base: 2 }}
-        px={{ base: 4 }}
-        borderBottom={1}
-        borderStyle={"solid"}
-        borderColor={useColorModeValue("gray.200", "gray.900")}
-        align={"center"}
-      >
+    <>
+      <Box>
         <Flex
-          flex={{ base: 1, md: "auto" }}
-          ml={{ base: -2 }}
-          display={{ base: "flex", md: "none" }}
+          bg={useColorModeValue("white", "gray.800")}
+          color={useColorModeValue("gray.600", "white")}
+          minH={"60px"}
+          py={{ base: 2 }}
+          px={{ base: 4 }}
+          borderBottom={1}
+          borderStyle={"solid"}
+          borderColor={useColorModeValue("gray.200", "gray.900")}
+          align={"center"}
         >
-          <IconButton
-            onClick={onToggle}
-            icon={
-              isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />
-            }
-            variant={"ghost"}
-            aria-label={"Toggle Navigation"}
-          />
-        </Flex>
-        <Flex
-          flex={{ base: 1 }}
-          alignItems="center"
-          justify={{ base: "center", md: "start" }}
-        >
-          <Image src="/logo.svg" alt="Crowdfunding" width={7} height={7} />
-          <Text
-            textAlign={useBreakpointValue({ base: "center", md: "left" })}
-            fontFamily={"heading"}
-            color={useColorModeValue("gray.800", "white")}
-            display={{ base: "none", md: "flex" }}
-            marginLeft={4}
-          >
-            Crowd Help
-          </Text>
-
           <Flex
-            display={{ base: "none", md: "flex" }}
-            ml={10}
-            alignItems="center"
+            flex={{ base: 1, md: "auto" }}
+            ml={{ base: -2 }}
+            display={{ base: "flex", md: "none" }}
           >
-            <DesktopNav />
+            <IconButton
+              onClick={onToggle}
+              icon={
+                isOpen ? (
+                  <CloseIcon w={3} h={3} />
+                ) : (
+                  <HamburgerIcon w={5} h={5} />
+                )
+              }
+              variant={"ghost"}
+              aria-label={"Toggle Navigation"}
+            />
           </Flex>
+          <Flex
+            flex={{ base: 1 }}
+            alignItems="center"
+            justify={{ base: "center", md: "start" }}
+          >
+            <Image src="/logo.svg" alt="Crowdfunding" width={7} height={7} />
+            <Text
+              textAlign={useBreakpointValue({ base: "center", md: "left" })}
+              fontFamily={"heading"}
+              color={useColorModeValue("gray.800", "white")}
+              display={{ base: "none", md: "flex" }}
+              marginLeft={4}
+            >
+              Crowd Help
+            </Text>
+
+            <Flex
+              display={{ base: "none", md: "flex" }}
+              ml={10}
+              alignItems="center"
+            >
+              <DesktopNav />
+            </Flex>
+          </Flex>
+
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify={"flex-end"}
+            direction={"row"}
+            spacing={6}
+          >
+            <Button
+              as={"a"}
+              fontSize={"sm"}
+              fontWeight={400}
+              variant={"link"}
+              onClick={() => {
+                setAuthType("LOGIN");
+                onModalOpen();
+              }}
+            >
+              Iniciar sesión
+            </Button>
+            <Button
+              display={{ base: "none", md: "inline-flex" }}
+              fontSize={"sm"}
+              fontWeight={600}
+              color={"white"}
+              bg={"pink.400"}
+              _hover={{
+                bg: "pink.300"
+              }}
+              onClick={() => {
+                setAuthType("REGISTER");
+                onModalOpen();
+              }}
+            >
+              Registrarse
+            </Button>
+            <ThemeToggle />
+          </Stack>
         </Flex>
 
-        <Stack
-          flex={{ base: 1, md: 0 }}
-          justify={"flex-end"}
-          direction={"row"}
-          spacing={6}
-        >
-          <Button
-            as={"a"}
-            fontSize={"sm"}
-            fontWeight={400}
-            variant={"link"}
-            href={"#"}
-          >
-            Iniciar sesión
-          </Button>
-          <Button
-            display={{ base: "none", md: "inline-flex" }}
-            fontSize={"sm"}
-            fontWeight={600}
-            color={"white"}
-            bg={"pink.400"}
-            _hover={{
-              bg: "pink.300"
-            }}
-          >
-            Registrarse
-          </Button>
-          <ThemeToggle />
-        </Stack>
-      </Flex>
+        <Collapse in={isOpen} animateOpacity>
+          <MobileNav />
+        </Collapse>
 
-      <Collapse in={isOpen} animateOpacity>
-        <MobileNav />
-      </Collapse>
-
-      {children}
-    </Box>
+        {children}
+        <Footer />
+      </Box>
+      <AuthModal
+        type={authType}
+        setType={setAuthType}
+        isOpen={isModalOpen}
+        onClose={onModalClose}
+      />
+    </>
   );
 };
 
@@ -256,10 +284,8 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         >
           {children &&
             children.map(child => (
-              <Link href={child.href ?? "#"}>
-                <Box key={child.label} py={2}>
-                  {child.label}
-                </Box>
+              <Link key={child.label} href={child.href ?? "#"}>
+                <Box py={2}>{child.label}</Box>
               </Link>
             ))}
         </Stack>
