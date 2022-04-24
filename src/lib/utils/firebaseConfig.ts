@@ -23,3 +23,7 @@ if (firebase.apps.length) {
 
 export const app = firebaseApp;
 export const auth = () => app?.auth();
+export const getFirebaseToken = () =>
+  auth()
+    .currentUser?.getIdToken(true)
+    .then(token => `Bearer ${token}`);

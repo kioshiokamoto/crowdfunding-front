@@ -22,6 +22,8 @@ import {
   Text,
   useColorModeValue
 } from "@chakra-ui/react";
+import { createUser } from "lib/services/user.services";
+import { auth } from "lib/utils/firebaseConfig";
 import React, { useState } from "react";
 import { AuthModalProps as Props } from "./AuthModal.types";
 
@@ -34,7 +36,9 @@ const AuthModal: React.FC<Props> = props => {
       <ModalContent>
         <ModalCloseButton />
         <ModalBody>
-          {type === "LOGIN" ? <Login setType={setType} /> : null}
+          {type === "LOGIN" ? (
+            <Login setType={setType} onClose={onClose} />
+          ) : null}
           {type === "REGISTER" ? <SignUp setType={setType} /> : null}
         </ModalBody>
 
@@ -51,9 +55,28 @@ const AuthModal: React.FC<Props> = props => {
 
 export default AuthModal;
 
-const Login: React.FC<Pick<Props, "setType">> = props => {
-  const { setType } = props;
+const Login: React.FC<Pick<Props, "setType" | "onClose">> = props => {
+  const { setType, onClose } = props;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+    await auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(e => {
+        console.log({ e });
+        onClose();
+      })
+      .catch(e => {
+        console.log({ e });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   return (
     <Flex
@@ -79,12 +102,20 @@ const Login: React.FC<Pick<Props, "setType">> = props => {
           <Stack spacing={4}>
             <FormControl id="email" isRequired>
               <FormLabel>Correo electrónico</FormLabel>
-              <Input type="email" />
+              <Input
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.currentTarget.value)}
+              />
             </FormControl>
             <FormControl id="password" isRequired>
               <FormLabel>Contraseña</FormLabel>
               <InputGroup>
-                <Input type={showPassword ? "text" : "password"} />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={e => setPassword(e.currentTarget.value)}
+                />
                 <InputRightElement h={"full"}>
                   <Button
                     variant={"ghost"}
@@ -99,13 +130,15 @@ const Login: React.FC<Pick<Props, "setType">> = props => {
             </FormControl>
             <Stack spacing={10} pt={2}>
               <Button
-                loadingText="Submitting"
+                loadingText="Conectandose..."
+                isLoading={isLoading}
                 size="lg"
                 bg={"blue.400"}
                 color={"white"}
                 _hover={{
                   bg: "blue.500"
                 }}
+                onClick={handleLogin}
               >
                 Iniciar sesión
               </Button>
@@ -135,11 +168,45 @@ const Login: React.FC<Pick<Props, "setType">> = props => {
 
 const SignUp: React.FC<Pick<Props, "setType">> = props => {
   const { setType } = props ?? {};
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
+  const [user, setUser] = useState<any>();
 
   const handleRegisterFirebaseUser = async () => {
-    setStep(2);
+    setIsLoading(true);
+    await auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(e => {
+        console.log({ e });
+        setUser(e);
+        setStep(2);
+      })
+      .catch(e => {
+        console.log(e);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+
+  const handleCreateUser = async (type: string) => {
+    setIsLoading(true);
+    try {
+      const data = await createUser({
+        email,
+        name,
+        type,
+        uid: user.uid
+      });
+      console.log({ data });
+    } catch (e) {
+      console.log(e);
+    }
+    setIsLoading(false);
   };
 
   const stepForm = () => {
@@ -168,16 +235,28 @@ const SignUp: React.FC<Pick<Props, "setType">> = props => {
               <Stack spacing={4}>
                 <FormControl id="firstName" isRequired>
                   <FormLabel>Nombre</FormLabel>
-                  <Input type="text" />
+                  <Input
+                    type="text"
+                    value={name}
+                    onChange={e => setName(e.currentTarget.value)}
+                  />
                 </FormControl>
                 <FormControl id="email" isRequired>
                   <FormLabel>Correo electrónico</FormLabel>
-                  <Input type="email" />
+                  <Input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.currentTarget.value)}
+                  />
                 </FormControl>
                 <FormControl id="password" isRequired>
                   <FormLabel>Contraseña</FormLabel>
                   <InputGroup>
-                    <Input type={showPassword ? "text" : "password"} />
+                    <Input
+                      value={password}
+                      onChange={e => setPassword(e.currentTarget.value)}
+                      type={showPassword ? "text" : "password"}
+                    />
                     <InputRightElement h={"full"}>
                       <Button
                         variant={"ghost"}
@@ -192,7 +271,6 @@ const SignUp: React.FC<Pick<Props, "setType">> = props => {
                 </FormControl>
                 <Stack spacing={10} pt={2}>
                   <Button
-                    loadingText="Submitting"
                     size="lg"
                     bg={"blue.400"}
                     color={"white"}
@@ -200,6 +278,8 @@ const SignUp: React.FC<Pick<Props, "setType">> = props => {
                       bg: "blue.500"
                     }}
                     onClick={handleRegisterFirebaseUser}
+                    loadingText="Registrando..."
+                    isLoading={isLoading}
                   >
                     Registrarse
                   </Button>
@@ -245,6 +325,7 @@ const SignUp: React.FC<Pick<Props, "setType">> = props => {
                 </Text>
                 <Button
                   loadingText="Registrando.."
+                  isLoading={isLoading}
                   size="md"
                   borderRadius={6}
                   bg={"blue.700"}
@@ -253,7 +334,7 @@ const SignUp: React.FC<Pick<Props, "setType">> = props => {
                     bg: "blue.800"
                   }}
                   marginTop={5}
-                  onClick={() => {}}
+                  onClick={() => handleCreateUser("normal")}
                 >
                   Ser beneficiante
                 </Button>
@@ -271,6 +352,7 @@ const SignUp: React.FC<Pick<Props, "setType">> = props => {
                 </Text>
                 <Button
                   loadingText="Registrando.."
+                  isLoading={isLoading}
                   size="md"
                   borderRadius={6}
                   bg={"blue.700"}
@@ -279,7 +361,7 @@ const SignUp: React.FC<Pick<Props, "setType">> = props => {
                     bg: "blue.800"
                   }}
                   marginTop={5}
-                  onClick={() => {}}
+                  onClick={() => handleCreateUser("sponsor")}
                 >
                   Ser patrocinador
                 </Button>

@@ -11,6 +11,8 @@ import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import Footer from "./Footer";
 import AuthModal from "lib/components/AuthModal/AuthModal";
+import useGlobal from "lib/providers/global/global.hooks";
+import { auth } from "lib/utils/firebaseConfig";
 
 type LayoutProps = {
   children: ReactNode;
@@ -24,6 +26,8 @@ const Layout = ({ children }: LayoutProps) => {
     onClose: onModalClose
   } = useDisclosure();
   const [authType, setAuthType] = useState<"LOGIN" | "REGISTER">("LOGIN");
+  const { user } = useGlobal();
+  const isLogged = !!user?.uid;
 
   return (
     <>
@@ -88,34 +92,50 @@ const Layout = ({ children }: LayoutProps) => {
             direction={"row"}
             spacing={6}
           >
-            <Button
-              as={"a"}
-              fontSize={"sm"}
-              fontWeight={400}
-              variant={"link"}
-              onClick={() => {
-                setAuthType("LOGIN");
-                onModalOpen();
-              }}
-            >
-              Iniciar sesión
-            </Button>
-            <Button
-              display={{ base: "none", md: "inline-flex" }}
-              fontSize={"sm"}
-              fontWeight={600}
-              color={"white"}
-              bg={"pink.400"}
-              _hover={{
-                bg: "pink.300"
-              }}
-              onClick={() => {
-                setAuthType("REGISTER");
-                onModalOpen();
-              }}
-            >
-              Registrarse
-            </Button>
+            {!isLogged ? (
+              <>
+                <Button
+                  as={"a"}
+                  fontSize={"sm"}
+                  fontWeight={400}
+                  variant={"link"}
+                  onClick={() => {
+                    setAuthType("LOGIN");
+                    onModalOpen();
+                  }}
+                >
+                  Iniciar sesión
+                </Button>
+                <Button
+                  display={{ base: "none", md: "inline-flex" }}
+                  fontSize={"sm"}
+                  fontWeight={600}
+                  color={"white"}
+                  bg={"purple.400"}
+                  _hover={{
+                    bg: "purple.300"
+                  }}
+                  onClick={() => {
+                    setAuthType("REGISTER");
+                    onModalOpen();
+                  }}
+                >
+                  Registrarse
+                </Button>
+              </>
+            ) : (
+              <Button
+                as={"a"}
+                fontSize={"sm"}
+                fontWeight={400}
+                variant={"link"}
+                onClick={async () => {
+                  await auth().signOut();
+                }}
+              >
+                Cerrar sesión
+              </Button>
+            )}
             <ThemeToggle />
           </Stack>
         </Flex>
@@ -194,7 +214,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
       display={"block"}
       p={2}
       rounded={"md"}
-      _hover={{ bg: useColorModeValue("pink.50", "gray.900") }}
+      _hover={{ bg: useColorModeValue("purple.50", "gray.900") }}
     >
       <Link href={href ?? "#"}>
         <Box>
@@ -202,7 +222,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
             <Box>
               <Text
                 transition={"all .3s ease"}
-                _groupHover={{ color: "pink.400" }}
+                _groupHover={{ color: "purple.400" }}
                 fontWeight={500}
               >
                 {label}
@@ -218,7 +238,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
               align={"center"}
               flex={1}
             >
-              <Icon color={"pink.400"} w={5} h={5} as={ChevronRightIcon} />
+              <Icon color={"purple.400"} w={5} h={5} as={ChevronRightIcon} />
             </Flex>
           </Stack>
         </Box>

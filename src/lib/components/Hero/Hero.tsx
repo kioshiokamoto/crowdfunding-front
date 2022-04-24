@@ -29,14 +29,14 @@ const Hero: React.FC<Props> = () => {
                 position: "absolute",
                 bottom: 1,
                 left: 0,
-                bg: "blue.400",
+                bg: "purple.400",
                 zIndex: -1
               }}
             >
               ¡Estar unidos
             </Text>
             <br />{" "}
-            <Text color={"blue.400"} as={"span"}>
+            <Text color={"purple.400"} as={"span"}>
               es el progreso!
             </Text>{" "}
           </Heading>
@@ -48,10 +48,10 @@ const Hero: React.FC<Props> = () => {
           <Stack direction={{ base: "column", md: "row" }} spacing={4}>
             <Button
               rounded={"full"}
-              bg={"blue.400"}
+              bg={"purple.400"}
               color={"white"}
               _hover={{
-                bg: "blue.500"
+                bg: "purple.500"
               }}
             >
               Ver proyectos
