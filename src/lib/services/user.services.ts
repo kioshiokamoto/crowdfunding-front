@@ -4,10 +4,25 @@ import { getFirebaseToken } from "lib/utils/firebaseConfig";
 
 export const createUser = async (user: UserConfig) => {
   const authorization = await getFirebaseToken();
-  const response = await api.post("/user", user, {
+  const response = await api.post("/auth/register", user, {
     headers: {
       "content-type": "application/json",
       Authorization: authorization
+    }
+  });
+
+  return response.data;
+};
+
+export const getUserInfo = async (uid: string) => {
+  const authorization = await getFirebaseToken();
+  const response = await api.get("/auth/info", {
+    headers: {
+      "content-type": "application/json",
+      Authorization: authorization
+    },
+    params: {
+      uid
     }
   });
 

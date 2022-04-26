@@ -1,3 +1,4 @@
+import { getUserInfo } from "lib/services/user.services";
 import { auth } from "lib/utils/firebaseConfig";
 import React, { createContext, useCallback, useEffect } from "react";
 import { useMemo, useState } from "react";
@@ -15,10 +16,10 @@ const GlobalProvider: React.FC<Props> = props => {
   const subscriber = useCallback(async (user: any) => {
     const { uid: userId } = user ?? {};
     if (userId) {
-      // const userData = await getUserData(user.uid)
+      const userData = await getUserInfo(user.uid);
       setUser({
-        ...user
-        // userData
+        ...user,
+        ...userData
       });
     } else {
       setUser(undefined);

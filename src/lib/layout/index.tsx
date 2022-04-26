@@ -28,6 +28,7 @@ const Layout = ({ children }: LayoutProps) => {
   const [authType, setAuthType] = useState<"LOGIN" | "REGISTER">("LOGIN");
   const { user } = useGlobal();
   const isLogged = !!user?.uid;
+  const role = user?.role;
 
   return (
     <>
@@ -82,7 +83,7 @@ const Layout = ({ children }: LayoutProps) => {
               ml={10}
               alignItems="center"
             >
-              <DesktopNav />
+              <DesktopNav role={role} />
             </Flex>
           </Flex>
 
@@ -141,7 +142,7 @@ const Layout = ({ children }: LayoutProps) => {
         </Flex>
 
         <Collapse in={isOpen} animateOpacity>
-          <MobileNav />
+          <MobileNav role={role} />
         </Collapse>
 
         {children}
@@ -157,52 +158,56 @@ const Layout = ({ children }: LayoutProps) => {
   );
 };
 
-const DesktopNav = () => {
+const DesktopNav = ({ role }: { role: string | undefined }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
-
+  console.log({ role, NAV_ITEMS });
   return (
     <Stack direction={"row"} spacing={4}>
-      {NAV_ITEMS.map(navItem => (
-        <Box key={navItem.label}>
-          <Popover trigger={"hover"} placement={"bottom-start"}>
-            <Link href={navItem.href ?? "#"}>
-              <PopoverTrigger>
-                <Box
-                  p={2}
-                  fontSize={"sm"}
-                  fontWeight={500}
-                  color={linkColor}
-                  _hover={{
-                    textDecoration: "none",
-                    color: linkHoverColor
-                  }}
-                >
-                  {navItem.label}
-                </Box>
-              </PopoverTrigger>
-            </Link>
+      {NAV_ITEMS.map(navItem =>
+        navItem?.role?.includes(role ?? "") ? (
+          <Box key={navItem.label}>
+            <Popover trigger={"hover"} placement={"bottom-start"}>
+              <Link href={navItem.href ?? "#"}>
+                <a>
+                  <PopoverTrigger>
+                    <Box
+                      p={2}
+                      fontSize={"sm"}
+                      fontWeight={500}
+                      color={linkColor}
+                      _hover={{
+                        textDecoration: "none",
+                        color: linkHoverColor
+                      }}
+                    >
+                      {navItem.label}
+                    </Box>
+                  </PopoverTrigger>
+                </a>
+              </Link>
 
-            {navItem.children && (
-              <PopoverContent
-                border={0}
-                boxShadow={"xl"}
-                bg={popoverContentBgColor}
-                p={4}
-                rounded={"xl"}
-                minW={"sm"}
-              >
-                <Stack>
-                  {navItem.children.map(child => (
-                    <DesktopSubNav key={child.label} {...child} />
-                  ))}
-                </Stack>
-              </PopoverContent>
-            )}
-          </Popover>
-        </Box>
-      ))}
+              {navItem.children && (
+                <PopoverContent
+                  border={0}
+                  boxShadow={"xl"}
+                  bg={popoverContentBgColor}
+                  p={4}
+                  rounded={"xl"}
+                  minW={"sm"}
+                >
+                  <Stack>
+                    {navItem.children.map(child => (
+                      <DesktopSubNav key={child.label} {...child} />
+                    ))}
+                  </Stack>
+                </PopoverContent>
+              )}
+            </Popover>
+          </Box>
+        ) : null
+      )}
     </Stack>
   );
 };
@@ -217,46 +222,50 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
       _hover={{ bg: useColorModeValue("purple.50", "gray.900") }}
     >
       <Link href={href ?? "#"}>
-        <Box>
-          <Stack direction={"row"} align={"center"}>
-            <Box>
-              <Text
+        <a>
+          <Box>
+            <Stack direction={"row"} align={"center"}>
+              <Box>
+                <Text
+                  transition={"all .3s ease"}
+                  _groupHover={{ color: "purple.400" }}
+                  fontWeight={500}
+                >
+                  {label}
+                </Text>
+                <Text fontSize={"sm"}>{subLabel}</Text>
+              </Box>
+              <Flex
                 transition={"all .3s ease"}
-                _groupHover={{ color: "purple.400" }}
-                fontWeight={500}
+                transform={"translateX(-10px)"}
+                opacity={0}
+                _groupHover={{ opacity: "100%", transform: "translateX(0)" }}
+                justify={"flex-end"}
+                align={"center"}
+                flex={1}
               >
-                {label}
-              </Text>
-              <Text fontSize={"sm"}>{subLabel}</Text>
-            </Box>
-            <Flex
-              transition={"all .3s ease"}
-              transform={"translateX(-10px)"}
-              opacity={0}
-              _groupHover={{ opacity: "100%", transform: "translateX(0)" }}
-              justify={"flex-end"}
-              align={"center"}
-              flex={1}
-            >
-              <Icon color={"purple.400"} w={5} h={5} as={ChevronRightIcon} />
-            </Flex>
-          </Stack>
-        </Box>
+                <Icon color={"purple.400"} w={5} h={5} as={ChevronRightIcon} />
+              </Flex>
+            </Stack>
+          </Box>
+        </a>
       </Link>
     </Box>
   );
 };
 
-const MobileNav = () => {
+const MobileNav = ({ role }: { role: string | undefined }) => {
   return (
     <Stack
       bg={useColorModeValue("white", "gray.800")}
       p={4}
       display={{ md: "none" }}
     >
-      {NAV_ITEMS.map(navItem => (
-        <MobileNavItem key={navItem.label} {...navItem} />
-      ))}
+      {NAV_ITEMS.map(navItem =>
+        navItem?.role?.includes(role ?? "") ? (
+          <MobileNavItem key={navItem.label} {...navItem} />
+        ) : null
+      )}
     </Stack>
   );
 };
@@ -319,6 +328,7 @@ interface NavItem {
   subLabel?: string;
   children?: Array<NavItem>;
   href?: string;
+  role?: string[];
 }
 
 const NAV_ITEMS: Array<NavItem> = [
@@ -328,17 +338,21 @@ const NAV_ITEMS: Array<NavItem> = [
       {
         label: "Visita nuestro inicio",
         subLabel: "Brindamos apoyo a comunidades!",
-        href: "/"
+        href: "/",
+        role: ["sponsor", "user"]
       }
-    ]
+    ],
+    role: ["sponsor", "user"]
   },
   {
     label: "Proyectos",
-    href: "/"
+    href: "/proyectos",
+    role: ["sponsor", "user"]
   },
   {
-    label: "Nosotros",
-    href: "/"
+    label: "Publicacion",
+    href: "/publicacion",
+    role: ["sponsor"]
   }
 ];
 

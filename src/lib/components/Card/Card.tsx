@@ -11,7 +11,14 @@ import {
 import { CardProps as Props } from "./Card.types";
 
 const Card: React.FC<Props> = props => {
-  const { img, title, date, name, place, description } = props;
+  const {
+    img = "https://upload.wikimedia.org/wikipedia/commons/5/55/Crowdfundingescense.jpg",
+    title,
+    date,
+    name,
+    place,
+    description
+  } = props;
   return (
     <Center py={6}>
       <Box

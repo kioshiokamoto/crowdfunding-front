@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {
   Avatar,
@@ -22,6 +21,7 @@ import {
   Text,
   useColorModeValue
 } from "@chakra-ui/react";
+import useGlobal from "lib/providers/global/global.hooks";
 import { createUser } from "lib/services/user.services";
 import { auth } from "lib/utils/firebaseConfig";
 import React, { useState } from "react";
@@ -39,15 +39,10 @@ const AuthModal: React.FC<Props> = props => {
           {type === "LOGIN" ? (
             <Login setType={setType} onClose={onClose} />
           ) : null}
-          {type === "REGISTER" ? <SignUp setType={setType} /> : null}
+          {type === "REGISTER" ? (
+            <SignUp setType={setType} onClose={onClose} />
+          ) : null}
         </ModalBody>
-
-        {/* <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter> */}
       </ModalContent>
     </Modal>
   );
@@ -166,23 +161,21 @@ const Login: React.FC<Pick<Props, "setType" | "onClose">> = props => {
   );
 };
 
-const SignUp: React.FC<Pick<Props, "setType">> = props => {
-  const { setType } = props ?? {};
+const SignUp: React.FC<Pick<Props, "setType" | "onClose">> = props => {
+  const { setType, onClose } = props ?? {};
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
-  const [user, setUser] = useState<any>();
+  const { setUser } = useGlobal();
 
   const handleRegisterFirebaseUser = async () => {
     setIsLoading(true);
     await auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(e => {
-        console.log({ e });
-        setUser(e);
+      .then(() => {
         setStep(2);
       })
       .catch(e => {
@@ -199,10 +192,14 @@ const SignUp: React.FC<Pick<Props, "setType">> = props => {
       const data = await createUser({
         email,
         name,
-        type,
-        uid: user.uid
+        role: type,
+        uid: auth().currentUser?.uid ?? ""
       });
-      console.log({ data });
+      setUser({
+        ...auth().currentUser,
+        ...data.data
+      });
+      onClose();
     } catch (e) {
       console.log(e);
     }

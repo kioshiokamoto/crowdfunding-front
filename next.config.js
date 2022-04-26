@@ -19,6 +19,6 @@ module.exports = withPWA({
     dirs: ["src"]
   },
   images: {
-    domains: ["images.unsplash.com"]
+    domains: ["images.unsplash.com", "upload.wikimedia.org"]
   }
 });

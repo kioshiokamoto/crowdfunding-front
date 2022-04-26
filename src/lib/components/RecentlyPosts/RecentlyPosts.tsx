@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Text, Flex, Box } from "@chakra-ui/react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -8,39 +8,18 @@ import "swiper/css/scrollbar";
 
 import { RecentlyPostsProps as Props } from "./RecentlyPosts.types";
 import Card from "../Card/Card";
-import { CardProps } from "../Card/Card.types";
-
-const data: CardProps[] = [
-  {
-    title: "Caritas de Ángel",
-    place: "LIMA",
-    date: "Enero 22, 2022",
-    name: "Jorge López",
-    img: "/crowdfunding.jpg",
-    description:
-      "Proyecto de ayuda a la olla común “Caritas de Ángel”. Necesitamos abastecer a más de 100 personas dentro de la comunidad ya que muchos de ellos ya no cuentan con trabajo."
-  },
-  {
-    title: "Siempre adelante",
-    place: "ICA",
-    date: "Febrero 24, 2022",
-    name: "Diego Souza",
-    img: "/crowdfunding.jpg",
-    description:
-      "Necesitamos fondos para la familia Rodriguez Mesas quienes han sufrido un terrible incendio y lo han perdido todo."
-  },
-  {
-    title: "Juntos por ti",
-    place: "PIURA",
-    date: "Febrero 24, 2022",
-    name: "Luisa Aguirre",
-    img: "/crowdfunding.jpg",
-    description:
-      "Necesitamos fondos para que los niños del colegio San Luis Gonzaga puedan acudir a sus clases presenciales con todas las medidas y protocolos que necesitan."
-  }
-];
+import { getPost } from "lib/services/post.services";
 
 const RecentlyPosts: React.FC<Props> = () => {
+  const [recentlyPosts, setRecentlyPosts] = useState<any>();
+
+  useEffect(() => {
+    (async () => {
+      const data = await getPost({ last: 10 });
+      setRecentlyPosts(data.data);
+    })();
+  }, []);
+
   return (
     <Box py={4}>
       <Flex align="center" justify="center" py={4}>
@@ -73,18 +52,20 @@ const RecentlyPosts: React.FC<Props> = () => {
             }
           }}
         >
-          {data.map((item, index) => (
-            <SwiperSlide key={index}>
-              <Card
-                title={item.title}
-                img={item.img}
-                date={item.date}
-                name={item.name}
-                place={item.place}
-                description={item.description}
-              />
-            </SwiperSlide>
-          ))}
+          {recentlyPosts
+            ? recentlyPosts.map((item: any, index: any) => (
+                <SwiperSlide key={index}>
+                  <Card
+                    title={item.title}
+                    img={item.img}
+                    date={item.date}
+                    name={item.name}
+                    place={item.place}
+                    description={item.description}
+                  />
+                </SwiperSlide>
+              ))
+            : null}
         </Swiper>
       </Flex>
     </Box>
