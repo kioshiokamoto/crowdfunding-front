@@ -19,3 +19,15 @@ export const getPost = async (params: any) => {
 
   return response.data;
 };
+
+export const createPost = async (data: any) => {
+  const authorization = await getFirebaseToken();
+  const response = await api.post("/post/create", data, {
+    headers: {
+      "content-type": "application/json",
+      Authorization: authorization
+    }
+  });
+
+  return response.data;
+};

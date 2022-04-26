@@ -28,10 +28,6 @@ const SelectedProject: React.FC<Props> = () => {
   useEffect(() => {
     (async () => {
       const data = await getPost({ id: postId });
-      // console.log({ post: data.data[0] });
-      console.log({
-        goals: JSON.parse(data.data[0].goals.replace(/'/g, '"')).goals
-      });
       setPostData(data.data[0]);
     })();
   }, []);
