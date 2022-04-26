@@ -331,7 +331,7 @@ const SignUp: React.FC<Pick<Props, "setType" | "onClose">> = props => {
                     bg: "blue.800"
                   }}
                   marginTop={5}
-                  onClick={() => handleCreateUser("normal")}
+                  onClick={() => handleCreateUser("sponsor")}
                 >
                   Ser beneficiante
                 </Button>
@@ -358,7 +358,7 @@ const SignUp: React.FC<Pick<Props, "setType" | "onClose">> = props => {
                     bg: "blue.800"
                   }}
                   marginTop={5}
-                  onClick={() => handleCreateUser("sponsor")}
+                  onClick={() => handleCreateUser("normal")}
                 >
                   Ser patrocinador
                 </Button>

@@ -29,6 +29,7 @@ const Layout = ({ children }: LayoutProps) => {
   const { user } = useGlobal();
   const isLogged = !!user?.uid;
   const role = user?.role;
+  console.log({ user });
 
   return (
     <>
@@ -339,15 +340,15 @@ const NAV_ITEMS: Array<NavItem> = [
         label: "Visita nuestro inicio",
         subLabel: "Brindamos apoyo a comunidades!",
         href: "/",
-        role: ["sponsor", "user"]
+        role: ["sponsor", "normal"]
       }
     ],
-    role: ["sponsor", "user"]
+    role: ["sponsor", "normal"]
   },
   {
     label: "Proyectos",
     href: "/proyectos",
-    role: ["sponsor", "user"]
+    role: ["sponsor", "normal"]
   },
   {
     label: "Publicacion",
