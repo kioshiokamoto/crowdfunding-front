@@ -12,10 +12,13 @@ module.exports = withPWA({
     // add your own icons to public/manifest.json
     // to re-generate manifest.json, you can visit https://tomitm.github.io/appmanifest/
     dest: "public",
-    register: true,
+    register: true
   },
   reactStrictMode: true,
   eslint: {
-    dirs: ["src"],
+    dirs: ["src"]
   },
+  images: {
+    domains: ["images.unsplash.com", "upload.wikimedia.org"]
+  }
 });
